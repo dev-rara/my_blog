@@ -1,13 +1,12 @@
 # my_blog
-게시글을 작성하여 나만의 블로그를 만들 수 있는 Rest API
+게시글을 작성하여 나만의 블로그를 만들 수 있는 Rest API  
 <br>
 
 ## 🛠️Tech Stack
 * Spring Boot
 * JPA
 * Lombok
-* H2 Database
-<br>
+* H2 Database<br>
 
 ## 📌요구 사항
 ### 1. 전체 게시글 목록 조회 API
