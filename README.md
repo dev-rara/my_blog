@@ -4,7 +4,7 @@
 
 ## 🛠️Tech Stack
 * Spring Boot
-* JPA
+* Spring JPA
 * Lombok
 * H2 Database<br>
 
