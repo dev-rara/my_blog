@@ -48,7 +48,7 @@ public class PostServiceImpl implements PostService {
 	@Transactional
 	public PostResponseDto update(Long id, PostRequestDto requestDto) {
 		Post post = postRepository.findByIdAndPassword(id, requestDto.getPassword()).orElseThrow(
-			() -> new IllegalArgumentException("비밀번호가 일치하지 않습니다.")
+			() -> new IllegalArgumentException("아이디 혹은 비밀번호가 일치하지 않습니다.")
 		);
 		post.update(requestDto);
 		postRepository.save(post);
