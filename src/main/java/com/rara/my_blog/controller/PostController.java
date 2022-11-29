@@ -13,34 +13,36 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
+@RequestMapping("/api")
 public class PostController {
 	private final PostService postService;
 
-	@PostMapping("/api/posts")    // 게시글 작성 API
+	@PostMapping("/posts")    // 게시글 작성 API
 	public PostResponseDto createPost(@RequestBody PostRequestDto requestDto) {
 		return postService.createPost(requestDto);
 	}
 
-	@GetMapping("/api/posts")     // 전체 게시글 목록 조회 API
+	@GetMapping("/posts")     // 전체 게시글 목록 조회 API
 	public List<PostResponseDto> getPostList() {
 		return postService.getPostList();
 	}
 
-	@GetMapping("/api/posts/{id}")   // 선택한 게시글 조회 API
+	@GetMapping("/posts/{id}")   // 선택한 게시글 조회 API
 	public PostResponseDto getPost(@PathVariable Long id) {
 		return postService.getPost(id);
 	}
 
-	@PutMapping("/api/posts/{id}")   // 선택한 게시글 수정 API
+	@PutMapping("/posts/{id}")   // 선택한 게시글 수정 API
 	public PostResponseDto updatePost(@PathVariable Long id, @RequestBody PostRequestDto requestDto) {
 		return postService.update(id, requestDto);
 	}
 
-	@DeleteMapping("/api/posts/{id}")   // 선택한 게시글 삭제 API
+	@DeleteMapping("/posts/{id}")   // 선택한 게시글 삭제 API
 	public PostDeleteResponseDto deletePost(@PathVariable Long id, @RequestBody PostDeleteRequestDto requestDto) {
 		return new PostDeleteResponseDto(postService.deletePost(id, requestDto.getPassword()));
 	}
