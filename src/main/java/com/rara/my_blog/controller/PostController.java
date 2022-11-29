@@ -39,7 +39,7 @@ public class PostController {
 
 	@PutMapping("/posts/{id}")   // 선택한 게시글 수정 API
 	public PostResponseDto updatePost(@PathVariable Long id, @RequestBody PostRequestDto requestDto) {
-		return postService.update(id, requestDto);
+		return postService.updatePost(id, requestDto);
 	}
 
 	@DeleteMapping("/posts/{id}")   // 선택한 게시글 삭제 API

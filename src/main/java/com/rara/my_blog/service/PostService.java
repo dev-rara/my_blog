@@ -16,7 +16,7 @@ public interface PostService {
 	PostResponseDto getPost(Long id);
 
 	// 선택한 게시글 수정
-	PostResponseDto update(Long id, PostRequestDto requestDto);
+	PostResponseDto updatePost(Long id, PostRequestDto requestDto);
 
 	// 선택한 게시글 삭제
 	boolean deletePost(Long id, String password);
