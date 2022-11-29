@@ -34,7 +34,7 @@ public class PostServiceImpl implements PostService {
 			.collect(Collectors.toList());
 	}
 
-
+	@Override
 	@Transactional
 	public PostResponseDto getPost(Long id) {
 		Post post = postRepository.findById(id).orElseThrow(
