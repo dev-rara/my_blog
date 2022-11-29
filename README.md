@@ -7,7 +7,8 @@
 * Spring Boot
 * Spring JPA
 * Lombok
-* H2 Database<br>
+* H2 Database  
+<br>
 
 ### 💡구현 기능
 #### 1. 전체 게시글 목록 조회 API
