@@ -4,7 +4,6 @@ import com.rara.my_blog.dto.PostDeleteRequestDto;
 import com.rara.my_blog.dto.PostDeleteResponseDto;
 import com.rara.my_blog.dto.PostRequestDto;
 import com.rara.my_blog.dto.PostResponseDto;
-import com.rara.my_blog.entity.Post;
 import com.rara.my_blog.service.PostService;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
