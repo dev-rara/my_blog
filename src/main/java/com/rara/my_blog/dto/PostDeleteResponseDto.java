@@ -5,9 +5,9 @@ import lombok.Setter;
 
 @Getter
 public class PostDeleteResponseDto {
-	private boolean result;
+	private boolean success;
 
 	public PostDeleteResponseDto (boolean result) {
-		this.result = result;
+		this.success = result;
 	}
 }
