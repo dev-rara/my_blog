@@ -9,6 +9,6 @@ public class PostRequestDto {
 	private String author;
 	private String content;
 	private String password;
-	private LocalDateTime registeredAt;
-	private LocalDateTime unRegisteredAt;
+	private LocalDateTime createdAt;
+	private LocalDateTime modifiedAt;
 }
