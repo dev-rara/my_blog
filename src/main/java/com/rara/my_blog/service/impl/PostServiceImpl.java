@@ -1,4 +1,4 @@
-package com.rara.my_blog.service.Impl;
+package com.rara.my_blog.service.impl;
 
 import com.rara.my_blog.dto.PostRequestDto;
 import com.rara.my_blog.dto.PostResponseDto;
