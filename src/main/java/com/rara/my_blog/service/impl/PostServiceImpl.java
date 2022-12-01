@@ -57,7 +57,6 @@ public class PostServiceImpl implements PostService {
 		return new PostResponseDto(post);
 	}
 
-
 	@Override
 	public boolean deletePost(Long id, String password) {
 		if (postRepository.existsByIdAndPassword(id, password)) {
