@@ -7,6 +7,8 @@ import com.rara.my_blog.dto.PostResponseDto;
 import com.rara.my_blog.service.PostService;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -28,8 +30,8 @@ public class PostController {
 	}
 
 	@GetMapping("/posts")     // 전체 게시글 목록 조회 API
-	public List<PostResponseDto> getPostList() {
-		return postService.getPostList();
+	public List<PostResponseDto> getPostList(@PageableDefault(size = 15) Pageable pageable) {
+		return postService.getPostList(pageable);
 	}
 
 	@GetMapping("/posts/{id}")   // 선택한 게시글 조회 API

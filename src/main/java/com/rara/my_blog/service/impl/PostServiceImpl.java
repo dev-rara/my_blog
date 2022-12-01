@@ -8,6 +8,7 @@ import com.rara.my_blog.service.PostService;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,9 +30,9 @@ public class PostServiceImpl implements PostService {
 
 	@Override
 	@Transactional(readOnly = true)
-	public List<PostResponseDto> getPostList() {
-		return postRepository.findAllByOrderByCreatedAtDesc().stream().map(PostResponseDto::new)
-			.collect(Collectors.toList());
+	public List<PostResponseDto> getPostList(Pageable pageable) {
+		return postRepository.findAllByOrderByCreatedAtDesc(pageable).stream().map(PostResponseDto::new).collect(
+			Collectors.toList());
 	}
 
 	@Override
@@ -48,7 +49,7 @@ public class PostServiceImpl implements PostService {
 	@Transactional
 	public PostResponseDto updatePost(Long id, PostRequestDto requestDto) {
 		Post post = postRepository.findByIdAndPassword(id, requestDto.getPassword()).orElseThrow(
-			() -> new IllegalArgumentException("아이디 혹은 비밀번호가 일치하지 않습니다.")
+			() -> new IllegalArgumentException("아이디 또는 비밀번호가 일치하지 않습니다.")
 		);
 		post.update(requestDto);
 		postRepository.save(post);
