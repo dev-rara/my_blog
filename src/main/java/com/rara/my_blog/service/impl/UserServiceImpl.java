@@ -5,11 +5,15 @@ import com.rara.my_blog.dto.SignupRequestDto;
 import com.rara.my_blog.entity.User;
 import com.rara.my_blog.repository.UserRepository;
 import com.rara.my_blog.service.UserService;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.validation.Errors;
+import org.springframework.validation.FieldError;
 
 @Service
 @RequiredArgsConstructor
