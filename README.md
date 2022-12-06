@@ -6,6 +6,7 @@
 ## 🛠️Tech Stack
 * Spring Boot
 * Spring Data JPA
+* Spring Validation
 * Lombok
 * H2 Database  <br>
 
