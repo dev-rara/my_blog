@@ -27,7 +27,6 @@ public class UserController {
 			bindingResult.getAllErrors().forEach(objectError -> {
 				sb.append(objectError.getDefaultMessage());
 			});
-
 			return new ResponseDto(sb.toString(), HttpStatus.BAD_REQUEST.value());
 		}
 		return userService.signup(signupRequestDto);
