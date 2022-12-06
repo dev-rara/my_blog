@@ -15,7 +15,7 @@ public class ExceptionController {
 
 	//그 외의 Exception
 	@ExceptionHandler(Exception.class)
-	public ResponseDto ValidException() {
+	public ResponseDto ValidException(Exception e) {
 		return new ResponseDto(ErrorCode.SERVER_ERROR.getMsg(), ErrorCode.SERVER_ERROR.getStatusCode());
 	}
 }
