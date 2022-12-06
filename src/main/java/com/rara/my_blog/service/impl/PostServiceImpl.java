@@ -71,14 +71,13 @@ public class PostServiceImpl implements PostService {
 			throw new IllegalArgumentException("유효한 Token이 아닙니다.");
 		}
 
-		//유효한 토큰일 경우 게시글 수정
-		Post post = postRepository.findById(id).orElseThrow(
-			() -> new IllegalArgumentException("해당하는 게시글이 없습니다.")
-		);
-		post.update(requestDto, user.getUsername());
-		postRepository.save(post);
-
-		return new PostResponseDto(post);
+		if (postRepository.existsByIdAndUsername(id, user.getUsername()) || user.getRole().equals(UserRoleEnum.ADMIN)) {
+			Post post = postRepository.findById(id).get();
+			post.update(requestDto, user.getUsername());
+			return new PostResponseDto(post);
+		} else {
+			throw new IllegalArgumentException("작성자만 수정/삭제할 수 있습니다.");
+		}
 	}
 
 
@@ -91,7 +90,7 @@ public class PostServiceImpl implements PostService {
 		}
 
 		//유효한 토큰일 경우 삭제
-		if (postRepository.existsByIdAndUsername(id, user.getUsername())) {
+		if (postRepository.existsByIdAndUsername(id, user.getUsername()) || user.getRole().equals(UserRoleEnum.ADMIN)) {
 			postRepository.deleteById(id);
 			return new ResponseDto("게시글 삭제 성공", HttpStatus.OK.value());
 		} else {
