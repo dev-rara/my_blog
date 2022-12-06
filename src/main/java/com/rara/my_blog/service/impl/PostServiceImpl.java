@@ -31,30 +31,17 @@ public class PostServiceImpl implements PostService {
 	@Override
 	@Transactional
 	public PostResponseDto createPost(PostRequestDto requestDto, HttpServletRequest httpServletRequest) {
-		String token = jwtUtil.resolveToken(httpServletRequest);
-		Claims claims;
+		User user = getUserInfo(httpServletRequest);
 
-		//유효한 토큰일 경우에만 게시글 작성
-		if(token != null) {
-			if(jwtUtil.validateToken(token)) {
-				//사용자 정보 가져오기
-				claims = jwtUtil.getUserInfoFromToken(token);
-			} else {
-				throw new IllegalArgumentException("유효한 Token이 아닙니다.");
-			}
-
-			//토큰에서 가져온 사용자 정보로 DB 조최
-			User user = userRepository.findByUsername(claims.getSubject()).orElseThrow(
-				() -> new IllegalArgumentException("사용자가 존재하지 않습니다.")
-			);
-
-			Post post = new Post(requestDto, user.getUsername());
-			post = postRepository.save(post);
-			post.setUser(user);
-			return new PostResponseDto(post);
-		} else {
-			return null;
+		if(user == null) {
+			throw new IllegalArgumentException("유효한 Token이 아닙니다.");
 		}
+
+		//유효한 토큰일 경우 게시글 등록
+		Post post = new Post(requestDto, user.getUsername());
+		post = postRepository.save(post);
+		post.setUser(user);
+		return new PostResponseDto(post);
 	}
 
 
@@ -78,36 +65,39 @@ public class PostServiceImpl implements PostService {
 	@Override
 	@Transactional
 	public PostResponseDto updatePost(Long id, PostRequestDto requestDto, HttpServletRequest httpServletRequest) {
-		String token = jwtUtil.resolveToken(httpServletRequest);
-		Claims claims;
+		User user = getUserInfo(httpServletRequest);
 
-		//유효한 토큰일 경우 수정 가능
-		if (token != null) {
-			if (jwtUtil.validateToken(token)) {
-				// 토큰에서 사용자 정보 가져오기
-				claims = jwtUtil.getUserInfoFromToken(token);
-			} else {
-				throw new IllegalArgumentException("유효한 Token이 아닙니다.");
-			}
-
-			// 토큰에서 가져온 사용자 정보를 사용하여 DB 조회
-			User user = userRepository.findByUsername(claims.getSubject()).orElseThrow(
-				() -> new IllegalArgumentException("사용자가 존재하지 않습니다.")
-			);
-
-			Post post = postRepository.findById(id).orElseThrow(
-				() -> new IllegalArgumentException("해당하는 게시글이 없습니다.")
-			);
-			post.update(requestDto, user.getUsername());
-			postRepository.save(post);
-
-			return new PostResponseDto(post);
+		if(user == null) {
+			throw new IllegalArgumentException("유효한 Token이 아닙니다.");
 		}
-		return null;
+
+		//유효한 토큰일 경우 게시글 수정
+		Post post = postRepository.findById(id).orElseThrow(
+			() -> new IllegalArgumentException("해당하는 게시글이 없습니다.")
+		);
+		post.update(requestDto, user.getUsername());
+		postRepository.save(post);
+
+		return new PostResponseDto(post);
 	}
 
 	@Override
 	public ResponseDto deletePost(Long id, HttpServletRequest httpServletRequest) {
+		User user = getUserInfo(httpServletRequest);
+
+		if (user == null) {
+			throw new IllegalArgumentException("유효한 Token이 아닙니다.");
+		}
+
+		//유효한 토큰일 경우 삭제
+		if(postRepository.existsByIdAndUsername(id, user.getUsername())) {
+			postRepository.deleteById(id);
+			return new ResponseDto("게시글 삭제 성공", HttpStatus.OK.value());
+		}
+		return null;
+	}
+
+	private User getUserInfo(HttpServletRequest httpServletRequest) {
 		String token = jwtUtil.resolveToken(httpServletRequest);
 		Claims claims;
 
@@ -124,11 +114,7 @@ public class PostServiceImpl implements PostService {
 			User user = userRepository.findByUsername(claims.getSubject()).orElseThrow(
 				() -> new IllegalArgumentException("사용자가 존재하지 않습니다.")
 			);
-
-			if(postRepository.existsByIdAndUsername(id, user.getUsername())) {
-				postRepository.deleteById(id);
-			}
-			return new ResponseDto("게시글 삭제 성공", HttpStatus.OK.value());
+			return user;
 		}
 		return null;
 	}
