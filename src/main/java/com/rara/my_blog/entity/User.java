@@ -1,9 +1,12 @@
 package com.rara.my_blog.entity;
 
+import com.rara.my_blog.dto.UserRoleEnum;
 import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -26,6 +29,10 @@ public class User {
 
 	@Column(nullable = false)
 	private String password;
+
+	@Column(nullable = false)
+	@Enumerated(value = EnumType.STRING)
+	private UserRoleEnum role;
 
 	@OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
 	private List<Post> posts = new ArrayList<>();
