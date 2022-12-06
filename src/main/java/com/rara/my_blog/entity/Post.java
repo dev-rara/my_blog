@@ -10,14 +10,16 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @Getter
+@Setter
 @NoArgsConstructor
 public class Post extends Timestamped {
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
 	@Column(nullable = false)
@@ -28,9 +30,6 @@ public class Post extends Timestamped {
 
 	@Column(nullable = false)
 	private String content;
-
-	@Column(nullable = false)
-	private String password;
 
 	@ManyToOne
 	@JoinColumn(name = "user_id")

@@ -6,6 +6,7 @@ import com.rara.my_blog.dto.PostRequestDto;
 import com.rara.my_blog.dto.PostResponseDto;
 import com.rara.my_blog.service.PostService;
 import java.util.List;
+import javax.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -25,8 +26,8 @@ public class PostController {
 	private final PostService postService;
 
 	@PostMapping("/posts")    // 게시글 작성 API
-	public PostResponseDto createPost(@RequestBody PostRequestDto requestDto) {
-		return postService.createPost(requestDto);
+	public PostResponseDto createPost(@RequestBody PostRequestDto requestDto, HttpServletRequest httpServletRequest) {
+		return postService.createPost(requestDto, httpServletRequest);
 	}
 
 	@GetMapping("/posts")     // 전체 게시글 목록 조회 API
@@ -40,8 +41,8 @@ public class PostController {
 	}
 
 	@PutMapping("/posts/{id}")   // 선택한 게시글 수정 API
-	public PostResponseDto updatePost(@PathVariable Long id, @RequestBody PostRequestDto requestDto) {
-		return postService.updatePost(id, requestDto);
+	public PostResponseDto updatePost(@PathVariable Long id, @RequestBody PostRequestDto requestDto,  HttpServletRequest httpServletRequest) {
+		return postService.updatePost(id, requestDto, httpServletRequest);
 	}
 
 	@DeleteMapping("/posts/{id}")   // 선택한 게시글 삭제 API
