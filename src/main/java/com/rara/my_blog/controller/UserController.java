@@ -24,10 +24,7 @@ public class UserController {
 		if(bindingResult.hasErrors()) {
 			StringBuilder sb = new StringBuilder();
 			bindingResult.getAllErrors().forEach(objectError -> {
-				FieldError field = (FieldError) objectError;
-				String message = objectError.getDefaultMessage();
-
-				sb.append(message);
+				sb.append(objectError.getDefaultMessage());
 			});
 
 			return new ResponseDto(sb.toString(), HttpStatus.BAD_REQUEST.value());
