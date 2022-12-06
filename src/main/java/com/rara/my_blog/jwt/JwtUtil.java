@@ -1,5 +1,6 @@
 package com.rara.my_blog.jwt;
 
+import com.rara.my_blog.dto.UserRoleEnum;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
@@ -24,6 +25,8 @@ import org.springframework.util.StringUtils;
 public class JwtUtil {
 	//Header KEY 값
 	public static final String AUTHORIZATION_HEADER = "Authorization";
+	//사용자 권한 값의 KEY
+	private static final String AUTHORIZATION_KEY = "auth";
 	//Token 식별자
 	private static final String BEARER_PREFIX = "Bearer ";
 	//Token 유효시간
@@ -50,12 +53,13 @@ public class JwtUtil {
 	}
 
 	//Token 생성
-	public String createToken(String username) {
+	public String createToken(String username, UserRoleEnum role) {
 		Date date = new Date();
 
 		return BEARER_PREFIX +
 			Jwts.builder()
 				.setSubject(username)
+				.claim(AUTHORIZATION_KEY, role)
 				.setExpiration(new Date(date.getTime() + TOKEN_TIME))
 				.setIssuedAt(date)
 				.signWith(key, signatureAlgorithm)
