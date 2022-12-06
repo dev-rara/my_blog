@@ -6,13 +6,16 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
 @Getter
 @NoArgsConstructor
-public class Post extends Timestamped{
+public class Post extends Timestamped {
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Long id;
@@ -21,7 +24,7 @@ public class Post extends Timestamped{
 	private String title;
 
 	@Column(nullable = false)
-	private String author;
+	private String username;
 
 	@Column(nullable = false)
 	private String content;
@@ -29,17 +32,20 @@ public class Post extends Timestamped{
 	@Column(nullable = false)
 	private String password;
 
-	public Post(PostRequestDto requestDto) {
+	@ManyToOne
+	@JoinColumn(name = "user_id")
+	private User user;
+
+
+	public Post(PostRequestDto requestDto, String username) {
 		this.title = requestDto.getTitle();
-		this.author = requestDto.getAuthor();
+		this.username = username;
 		this.content = requestDto.getContent();
-		this.password = requestDto.getPassword();
 	}
 
-	public void update(PostRequestDto requestDto) {
+	public void update(PostRequestDto requestDto, String username) {
 		this.title = requestDto.getTitle();
-		this.author = requestDto.getAuthor();
+		this.username = username;
 		this.content = requestDto.getContent();
-		this.password = requestDto.getPassword();
 	}
 }
