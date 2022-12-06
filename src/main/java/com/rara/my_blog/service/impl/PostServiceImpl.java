@@ -6,6 +6,8 @@ import com.rara.my_blog.dto.ResponseDto;
 import com.rara.my_blog.dto.UserRoleEnum;
 import com.rara.my_blog.entity.Post;
 import com.rara.my_blog.entity.User;
+import com.rara.my_blog.exception.CustomException;
+import com.rara.my_blog.exception.ErrorCode;
 import com.rara.my_blog.jwt.JwtUtil;
 import com.rara.my_blog.repository.PostRepository;
 import com.rara.my_blog.repository.UserRepository;
@@ -33,10 +35,6 @@ public class PostServiceImpl implements PostService {
 	public PostResponseDto createPost(PostRequestDto requestDto, HttpServletRequest httpServletRequest) {
 		User user = getUserInfo(httpServletRequest);
 
-		if(user == null) {
-			throw new IllegalArgumentException("유효한 Token이 아닙니다.");
-		}
-
 		//유효한 토큰일 경우 게시글 등록
 		Post post = new Post(requestDto, user.getUsername());
 		post = postRepository.save(post);
@@ -56,7 +54,7 @@ public class PostServiceImpl implements PostService {
 	@Transactional(readOnly = true)
 	public PostResponseDto getPost(Long id) {
 		Post post = postRepository.findById(id).orElseThrow(
-			() -> new IllegalArgumentException("게시글이 존재하지 않습니다.")
+			() -> new CustomException(ErrorCode.NOT_FOUND_POST)
 		);
 		return new PostResponseDto(post);
 	}
@@ -67,16 +65,12 @@ public class PostServiceImpl implements PostService {
 	public PostResponseDto updatePost(Long id, PostRequestDto requestDto, HttpServletRequest httpServletRequest) {
 		User user = getUserInfo(httpServletRequest);
 
-		if(user == null) {
-			throw new IllegalArgumentException("유효한 Token이 아닙니다.");
-		}
-
 		if (postRepository.existsByIdAndUsername(id, user.getUsername()) || user.getRole().equals(UserRoleEnum.ADMIN)) {
 			Post post = postRepository.findById(id).get();
 			post.update(requestDto, user.getUsername());
 			return new PostResponseDto(post);
 		} else {
-			throw new IllegalArgumentException("작성자만 수정/삭제할 수 있습니다.");
+			throw new CustomException(ErrorCode.UNAVAILABLE_MODIFICATION);
 		}
 	}
 
@@ -85,16 +79,12 @@ public class PostServiceImpl implements PostService {
 	public ResponseDto deletePost(Long id, HttpServletRequest httpServletRequest) {
 		User user = getUserInfo(httpServletRequest);
 
-		if (user == null) {
-			throw new IllegalArgumentException("유효한 Token이 아닙니다.");
-		}
-
 		//유효한 토큰일 경우 삭제
 		if (postRepository.existsByIdAndUsername(id, user.getUsername()) || user.getRole().equals(UserRoleEnum.ADMIN)) {
 			postRepository.deleteById(id);
 			return new ResponseDto("게시글 삭제 성공", HttpStatus.OK.value());
 		} else {
-			throw new IllegalArgumentException("작성자만 수정/삭제할 수 있습니다.");
+			throw new CustomException(ErrorCode.UNAVAILABLE_MODIFICATION);
 		}
 	}
 
@@ -109,16 +99,16 @@ public class PostServiceImpl implements PostService {
 				// 토큰에서 사용자 정보 가져오기
 				claims = jwtUtil.getUserInfoFromToken(token);
 			} else {
-				throw new IllegalArgumentException("토큰이 유효하지 않습니다.");
+				throw new CustomException(ErrorCode.INVALID_TOKEN);
 			}
 
 			// 토큰에서 가져온 사용자 정보를 사용하여 DB 조회
 			User user = userRepository.findByUsername(claims.getSubject()).orElseThrow(
-				() -> new IllegalArgumentException("회원을 찾을 수 없습니다.")
+				() -> new CustomException(ErrorCode.USER_NOT_FOUND)
 			);
 			return user;
 		} else {
-			throw new IllegalArgumentException("토큰이 유효하지 않습니다.");
+			throw new CustomException(ErrorCode.INVALID_TOKEN);
 		}
 	}
 }

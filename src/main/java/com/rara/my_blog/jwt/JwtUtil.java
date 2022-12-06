@@ -1,6 +1,8 @@
 package com.rara.my_blog.jwt;
 
 import com.rara.my_blog.dto.UserRoleEnum;
+import com.rara.my_blog.exception.CustomException;
+import com.rara.my_blog.exception.ErrorCode;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -69,7 +71,7 @@ public class JwtUtil {
 			Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
 			return true;
 		} catch (Exception e) {
-			throw new IllegalArgumentException("토큰이 유효하지 않습니다.");
+			throw new CustomException(ErrorCode.INVALID_TOKEN);
 		}
 	}
 

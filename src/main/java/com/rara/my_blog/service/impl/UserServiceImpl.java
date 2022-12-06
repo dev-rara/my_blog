@@ -5,6 +5,8 @@ import com.rara.my_blog.dto.ResponseDto;
 import com.rara.my_blog.dto.SignupRequestDto;
 import com.rara.my_blog.dto.UserRoleEnum;
 import com.rara.my_blog.entity.User;
+import com.rara.my_blog.exception.CustomException;
+import com.rara.my_blog.exception.ErrorCode;
 import com.rara.my_blog.jwt.JwtUtil;
 import com.rara.my_blog.repository.UserRepository;
 import com.rara.my_blog.service.UserService;
@@ -33,14 +35,14 @@ public class UserServiceImpl implements UserService {
 		//회원 중복 확인
 		Optional<User> found = userRepository.findByUsername(username);
 		if(found.isPresent()) {
-			throw new IllegalArgumentException("중복된 username 입니다.");
+			throw new CustomException(ErrorCode.OVERLAP_USERNAME);
 		}
 
 		//사용자 ROLE 확인
 		UserRoleEnum role = UserRoleEnum.USER;
 		if (signupRequestDto.isAdmin()) {
 			if (!signupRequestDto.getAdminToken().equals(ADMIN_TOKEN)) {
-				throw new IllegalArgumentException("관리자 암호가 틀려 등록이 불가능합니다.");
+				throw new CustomException(ErrorCode.MISMATCH_ADMIN_TOKEN);
 			}
 			role = UserRoleEnum.ADMIN;
 		}
@@ -59,12 +61,12 @@ public class UserServiceImpl implements UserService {
 
 		//사용자 확인
 		User user = userRepository.findByUsername(username).orElseThrow(
-			() -> new IllegalArgumentException("회원을 찾을 수 없습니다.")
+			() -> new CustomException(ErrorCode.USER_NOT_FOUND)
 		);
 
 		//비밀번호 확인
 		if(!user.getPassword().equals(password)) {
-			throw new IllegalArgumentException("회원을 찾을 수 없습니다.");
+			throw new CustomException(ErrorCode.MISMATCH_PASSWORD);
 		}
 
 		httpServletResponse.addHeader(
