@@ -7,7 +7,6 @@ import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.UnsupportedJwtException;
 import io.jsonwebtoken.security.Keys;
-import io.jsonwebtoken.security.SecurityException;
 import java.security.Key;
 import java.util.Base64;
 import java.util.Date;
@@ -23,10 +22,11 @@ import org.springframework.util.StringUtils;
 @Component
 @RequiredArgsConstructor
 public class JwtUtil {
-
+	//Header KEY 값
 	public static final String AUTHORIZATION_HEADER = "Authorization";
-	public static final String AUTHORIZATION_KEY = "auth";
+	//Token 식별자
 	private static final String BEARER_PREFIX = "Bearer ";
+	//Token 유효시간
 	private static final long TOKEN_TIME = 60 * 60 * 1000L;
 
 	@Value("${jwt.secret.key}")
@@ -40,7 +40,7 @@ public class JwtUtil {
 		key = Keys.hmacShaKeyFor(bytes);
 	}
 
-	// header 토큰을 가져오기
+	//Header 토큰 가져오기
 	public String resolveToken(HttpServletRequest request) {
 		String bearerToken = request.getHeader(AUTHORIZATION_HEADER);
 		if (StringUtils.hasText(bearerToken) && bearerToken.startsWith(BEARER_PREFIX)) {
@@ -49,21 +49,20 @@ public class JwtUtil {
 		return null;
 	}
 
-	// 토큰 생성
-	public String createToken(String username, String password) {
+	//Token 생성
+	public String createToken(String username) {
 		Date date = new Date();
 
 		return BEARER_PREFIX +
 			Jwts.builder()
 				.setSubject(username)
-				.claim(AUTHORIZATION_KEY, password)
 				.setExpiration(new Date(date.getTime() + TOKEN_TIME))
 				.setIssuedAt(date)
 				.signWith(key, signatureAlgorithm)
 				.compact();
 	}
 
-	// 토큰 검증
+	//Token 검증
 	public boolean validateToken(String token) {
 		try {
 			Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
@@ -80,7 +79,7 @@ public class JwtUtil {
 		return false;
 	}
 
-	// 토큰에서 사용자 정보 가져오기
+	//사용자 정보 가져오기
 	public Claims getUserInfoFromToken(String token) {
 		return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody();
 	}
