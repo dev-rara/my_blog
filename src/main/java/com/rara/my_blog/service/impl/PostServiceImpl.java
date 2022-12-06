@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import javax.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -47,8 +48,8 @@ public class PostServiceImpl implements PostService {
 
 	@Override
 	@Transactional(readOnly = true)
-	public List<PostResponseDto> getPostList(Pageable pageable) {
-		return postRepository.findAllByOrderByCreatedAtDesc(pageable).stream().map(PostResponseDto::new).collect(
+	public List<PostResponseDto> getPostList() {
+		return postRepository.findAllByOrderByCreatedAtDesc().stream().map(PostResponseDto::new).collect(
 			Collectors.toList());
 	}
 
@@ -81,6 +82,7 @@ public class PostServiceImpl implements PostService {
 		return new PostResponseDto(post);
 	}
 
+
 	@Override
 	public ResponseDto deletePost(Long id, HttpServletRequest httpServletRequest) {
 		User user = getUserInfo(httpServletRequest);
@@ -96,6 +98,7 @@ public class PostServiceImpl implements PostService {
 		}
 		return null;
 	}
+
 
 	private User getUserInfo(HttpServletRequest httpServletRequest) {
 		String token = jwtUtil.resolveToken(httpServletRequest);

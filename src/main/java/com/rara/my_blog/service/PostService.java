@@ -3,9 +3,9 @@ package com.rara.my_blog.service;
 import com.rara.my_blog.dto.PostRequestDto;
 import com.rara.my_blog.dto.PostResponseDto;
 import com.rara.my_blog.dto.ResponseDto;
+import com.rara.my_blog.entity.Post;
 import java.util.List;
 import javax.servlet.http.HttpServletRequest;
-import org.springframework.data.domain.Pageable;
 
 public interface PostService {
 
@@ -13,7 +13,7 @@ public interface PostService {
 	PostResponseDto createPost(PostRequestDto requestDto, HttpServletRequest httpServletRequest);
 
 	// 게시글 전체 목록 조회
-	List<PostResponseDto> getPostList(Pageable pageable);
+	List<PostResponseDto> getPostList();
 
 	// 선택한 게시글 조회
 	PostResponseDto getPost(Long id);
