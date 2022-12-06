@@ -2,6 +2,7 @@ package com.rara.my_blog.service;
 
 import com.rara.my_blog.dto.PostRequestDto;
 import com.rara.my_blog.dto.PostResponseDto;
+import com.rara.my_blog.dto.ResponseDto;
 import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import org.springframework.data.domain.Pageable;
@@ -21,6 +22,6 @@ public interface PostService {
 	PostResponseDto updatePost(Long id, PostRequestDto requestDto, HttpServletRequest httpServletRequest);
 
 	// 선택한 게시글 삭제
-	boolean deletePost(Long id, String password);
+	ResponseDto deletePost(Long id, HttpServletRequest httpServletRequest);
 
 }

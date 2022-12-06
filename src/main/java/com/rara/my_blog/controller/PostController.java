@@ -1,9 +1,8 @@
 package com.rara.my_blog.controller;
 
-import com.rara.my_blog.dto.PostDeleteRequestDto;
-import com.rara.my_blog.dto.PostDeleteResponseDto;
 import com.rara.my_blog.dto.PostRequestDto;
 import com.rara.my_blog.dto.PostResponseDto;
+import com.rara.my_blog.dto.ResponseDto;
 import com.rara.my_blog.service.PostService;
 import java.util.List;
 import javax.servlet.http.HttpServletRequest;
@@ -41,12 +40,12 @@ public class PostController {
 	}
 
 	@PutMapping("/posts/{id}")   // 선택한 게시글 수정 API
-	public PostResponseDto updatePost(@PathVariable Long id, @RequestBody PostRequestDto requestDto,  HttpServletRequest httpServletRequest) {
+	public PostResponseDto updatePost(@PathVariable Long id, @RequestBody PostRequestDto requestDto, HttpServletRequest httpServletRequest) {
 		return postService.updatePost(id, requestDto, httpServletRequest);
 	}
 
 	@DeleteMapping("/posts/{id}")   // 선택한 게시글 삭제 API
-	public PostDeleteResponseDto deletePost(@PathVariable Long id, @RequestBody PostDeleteRequestDto requestDto) {
-		return new PostDeleteResponseDto(postService.deletePost(id, requestDto.getPassword()));
+	public ResponseDto deletePost(@PathVariable Long id, HttpServletRequest httpServletRequest) {
+		return postService.deletePost(id, httpServletRequest);
 	}
 }
