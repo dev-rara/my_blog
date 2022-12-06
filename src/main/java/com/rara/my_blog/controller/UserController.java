@@ -7,6 +7,7 @@ import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -21,7 +22,15 @@ public class UserController {
 	@PostMapping("/signup")
 	public ResponseDto signup(@Valid @RequestBody SignupRequestDto signupRequestDto, BindingResult bindingResult) {
 		if(bindingResult.hasErrors()) {
-			return new ResponseDto("회원가입 실패", HttpStatus.BAD_REQUEST.value());
+			StringBuilder sb = new StringBuilder();
+			bindingResult.getAllErrors().forEach(objectError -> {
+				FieldError field = (FieldError) objectError;
+				String message = objectError.getDefaultMessage();
+
+				sb.append(message);
+			});
+
+			return new ResponseDto(sb.toString(), HttpStatus.BAD_REQUEST.value());
 		}
 		return userService.signup(signupRequestDto);
 	}
