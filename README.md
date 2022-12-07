@@ -7,8 +7,10 @@
 * Spring Boot
 * Spring Data JPA
 * Spring Validation
-* Lombok
-* H2 Database  <br>
+* JWT
+* AWS RDS(MySQL)
+* AWS EC2
+* Lombok  <br>
 
 ## 💡구현 기능
 **1. 회원가입 API** 
@@ -25,4 +27,10 @@
 
 **7. 선택한 게시글 삭제 API**
   
-**8. 예외처리**  
+**8. 댓글 작성 API**  
+  
+**9. 댓글 수정 API**  
+  
+**10. 댓글 삭제 API**    
+    
+**11. 예외처리**  
