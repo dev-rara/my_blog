@@ -34,7 +34,7 @@ public class User {
 	@Enumerated(value = EnumType.STRING)
 	private UserRoleEnum role;
 
-	@OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
+	@OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
 	private List<Post> posts = new ArrayList<>();
 
 	public User(String username, String password, UserRoleEnum role) {
