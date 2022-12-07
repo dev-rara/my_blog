@@ -3,6 +3,7 @@ package com.rara.my_blog.entity;
 import com.rara.my_blog.dto.UserRoleEnum;
 import java.util.ArrayList;
 import java.util.List;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -35,7 +36,7 @@ public class User {
 	@Enumerated(value = EnumType.STRING)
 	private UserRoleEnum role;
 
-	@OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+	@OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	private List<Post> posts = new ArrayList<>();
 
 	public User(String username, String password, UserRoleEnum role) {
