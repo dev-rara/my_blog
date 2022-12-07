@@ -2,6 +2,7 @@ package com.rara.my_blog.service.impl;
 
 import com.rara.my_blog.dto.CommentRequestDto;
 import com.rara.my_blog.dto.CommentResponseDto;
+import com.rara.my_blog.dto.UserRoleEnum;
 import com.rara.my_blog.entity.Comment;
 import com.rara.my_blog.entity.User;
 import com.rara.my_blog.exception.CustomException;
@@ -37,6 +38,21 @@ public class CommentServiceImpl implements CommentService {
 			return new CommentResponseDto(comment);
 		} else {
 			throw new CustomException(ErrorCode.NOT_FOUND_POST);
+		}
+	}
+
+	@Override
+	public CommentResponseDto updateComment(Long id, CommentRequestDto commentRequestDto,
+		HttpServletRequest httpServletRequest) {
+		User user = getUserInfo(httpServletRequest);
+
+		if (commentRepository.existsByIdAndUsername(id, user.getUsername()) || user.getRole().equals(
+			UserRoleEnum.ADMIN)) {
+			Comment comment = commentRepository.findById(id).get();
+			comment.update(commentRequestDto, user.getUsername());
+			return new CommentResponseDto(comment);
+		} else {
+			throw new CustomException(ErrorCode.UNAVAILABLE_MODIFICATION);
 		}
 	}
 
