@@ -15,11 +15,9 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 @Entity
 @Getter
-@Setter
 @NoArgsConstructor
 public class Post extends Timestamped {
 
@@ -47,6 +45,11 @@ public class Post extends Timestamped {
 		this.title = requestDto.getTitle();
 		this.username = username;
 		this.content = requestDto.getContent();
+	}
+
+	public void setUser(User user) {
+		this.user = user;
+		user.getPosts().add(this);
 	}
 
 	public void update(PostRequestDto requestDto, String username) {
