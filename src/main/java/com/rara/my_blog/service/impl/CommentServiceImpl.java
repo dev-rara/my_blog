@@ -2,6 +2,7 @@ package com.rara.my_blog.service.impl;
 
 import com.rara.my_blog.dto.CommentRequestDto;
 import com.rara.my_blog.dto.CommentResponseDto;
+import com.rara.my_blog.dto.ResponseDto;
 import com.rara.my_blog.dto.UserRoleEnum;
 import com.rara.my_blog.entity.Comment;
 import com.rara.my_blog.entity.User;
@@ -15,6 +16,7 @@ import com.rara.my_blog.service.CommentService;
 import io.jsonwebtoken.Claims;
 import javax.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -46,8 +48,8 @@ public class CommentServiceImpl implements CommentService {
 		HttpServletRequest httpServletRequest) {
 		User user = getUserInfo(httpServletRequest);
 
-		if (commentRepository.existsByIdAndUsername(id, user.getUsername()) || user.getRole().equals(
-			UserRoleEnum.ADMIN)) {
+		//유효한 토큰이거나 AMIN 권한일 경우 수정
+		if (commentRepository.existsByIdAndUsername(id, user.getUsername()) || user.getRole().equals(UserRoleEnum.ADMIN)) {
 			Comment comment = commentRepository.findById(id).get();
 			comment.update(commentRequestDto, user.getUsername());
 			return new CommentResponseDto(comment);
@@ -56,6 +58,18 @@ public class CommentServiceImpl implements CommentService {
 		}
 	}
 
+	@Override
+	public ResponseDto deleteComment(Long id, HttpServletRequest httpServletRequest) {
+		User user = getUserInfo(httpServletRequest);
+
+		//유효한 토큰이거나 AMIN 권한일 경우 삭제
+		if (commentRepository.existsByIdAndUsername(id, user.getUsername()) || user.getRole().equals(UserRoleEnum.ADMIN)) {
+			commentRepository.deleteById(id);
+			return new ResponseDto("댓글 삭제 성공", HttpStatus.OK.value());
+		} else {
+			throw new CustomException(ErrorCode.UNAVAILABLE_MODIFICATION);
+		}
+	}
 
 	private User getUserInfo(HttpServletRequest httpServletRequest) {
 		String token = jwtUtil.resolveToken(httpServletRequest);

@@ -65,6 +65,7 @@ public class PostServiceImpl implements PostService {
 	public PostResponseDto updatePost(Long id, PostRequestDto requestDto, HttpServletRequest httpServletRequest) {
 		User user = getUserInfo(httpServletRequest);
 
+		//유효한 토큰이거나 AMIN 권한일 경우 수정
 		if (postRepository.existsByIdAndUsername(id, user.getUsername()) || user.getRole().equals(UserRoleEnum.ADMIN)) {
 			Post post = postRepository.findById(id).get();
 			post.update(requestDto, user.getUsername());
@@ -79,7 +80,7 @@ public class PostServiceImpl implements PostService {
 	public ResponseDto deletePost(Long id, HttpServletRequest httpServletRequest) {
 		User user = getUserInfo(httpServletRequest);
 
-		//유효한 토큰일 경우 삭제
+		//유효한 토큰이거나 AMIN 권한일 경우 삭제
 		if (postRepository.existsByIdAndUsername(id, user.getUsername()) || user.getRole().equals(UserRoleEnum.ADMIN)) {
 			postRepository.deleteById(id);
 			return new ResponseDto("게시글 삭제 성공", HttpStatus.OK.value());
