@@ -37,6 +37,7 @@ public class CommentServiceImpl implements CommentService {
 			Comment comment = new Comment(commentRequestDto, user.getUsername());
 			commentRepository.save(comment);
 			comment.setPost(postRepository.findById(id).get());
+			comment.setUser(userRepository.findByUsername(user.getUsername()).get());
 			return new CommentResponseDto(comment);
 		} else {
 			throw new CustomException(ErrorCode.NOT_FOUND_POST);

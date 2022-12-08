@@ -28,8 +28,12 @@ public class Comment extends Timestamped {
 	private String content;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name="post_id")
+	@JoinColumn(name = "post_id")
 	private Post post;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "user_id")
+	private User user;
 
 	public Comment(CommentRequestDto requestDto, String username) {
 		this.content = requestDto.getContent();
@@ -39,6 +43,11 @@ public class Comment extends Timestamped {
 	public void setPost(Post post) {
 		this.post = post;
 		post.getComments().add(this);
+	}
+
+	public void setUser(User user) {
+		this.user = user;
+		user.getComments().add(this);
 	}
 
 	public void update(CommentRequestDto commentRequestDto, String username) {
