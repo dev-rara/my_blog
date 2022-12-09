@@ -5,6 +5,7 @@ import com.rara.my_blog.dto.CommentResponseDto;
 import com.rara.my_blog.dto.ResponseDto;
 import com.rara.my_blog.dto.UserRoleEnum;
 import com.rara.my_blog.entity.Comment;
+import com.rara.my_blog.entity.Post;
 import com.rara.my_blog.entity.User;
 import com.rara.my_blog.exception.CustomException;
 import com.rara.my_blog.exception.ErrorCode;
@@ -34,10 +35,10 @@ public class CommentServiceImpl implements CommentService {
 		User user = getUserInfo(httpServletRequest);
 
 		if(postRepository.existsById(id)) {
+			Post post = postRepository.findById(id).get();
 			Comment comment = new Comment(commentRequestDto, user.getUsername());
+			comment.updatePost(post);
 			commentRepository.save(comment);
-			comment.setPost(postRepository.findById(id).get());
-			comment.setUser(userRepository.findByUsername(user.getUsername()).get());
 			return new CommentResponseDto(comment);
 		} else {
 			throw new CustomException(ErrorCode.NOT_FOUND_POST);

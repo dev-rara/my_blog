@@ -57,4 +57,9 @@ public class Post extends Timestamped {
 		this.username = username;
 		this.content = requestDto.getContent();
 	}
+
+	public void addCommnet(Comment comment) {
+		this.comments.add(comment);
+		comment.updatePost(this);
+	}
 }
