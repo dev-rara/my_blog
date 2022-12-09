@@ -37,8 +37,8 @@ public class PostServiceImpl implements PostService {
 
 		//유효한 토큰일 경우 게시글 등록
 		Post post = new Post(requestDto, user.getUsername());
-		post = postRepository.save(post);
 		post.setUser(user);
+		post = postRepository.save(post);
 		return new PostResponseDto(post);
 	}
 

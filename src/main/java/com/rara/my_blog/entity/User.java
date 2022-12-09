@@ -49,4 +49,14 @@ public class User {
 		this.role = role;
 	}
 
+	public void addPosts(Post post) {
+		post.setUser(this);
+		this.getPosts().add(post);
+	}
+
+	public void addComments(Comment comment) {
+		comment.setUser(this);
+		this.getComments().add(comment);
+	}
+
 }

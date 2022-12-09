@@ -48,6 +48,9 @@ public class Post extends Timestamped {
 	}
 
 	public void setUser(User user) {
+		if (this.user != null) {
+			this.user.getComments().remove(this);
+		}
 		this.user = user;
 		user.getPosts().add(this);
 	}
@@ -59,7 +62,7 @@ public class Post extends Timestamped {
 	}
 
 	public void addCommnet(Comment comment) {
-		this.comments.add(comment);
-		comment.updatePost(this);
+		comment.setPost(this);
+		this.getComments().add(comment);
 	}
 }

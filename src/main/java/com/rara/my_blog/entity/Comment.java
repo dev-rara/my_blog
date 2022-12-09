@@ -41,11 +41,17 @@ public class Comment extends Timestamped {
 	}
 
 	public void setPost(Post post) {
+		if (this.post != null) {
+			this.post.getComments().remove(this);
+		}
 		this.post = post;
 		post.getComments().add(this);
 	}
 
 	public void setUser(User user) {
+		if (this.user != null) {
+			this.user.getComments().remove(this);
+		}
 		this.user = user;
 		user.getComments().add(this);
 	}
