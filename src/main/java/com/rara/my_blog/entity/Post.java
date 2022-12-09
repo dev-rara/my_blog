@@ -64,8 +64,4 @@ public class Post extends Timestamped {
 		this.content = requestDto.getContent();
 	}
 
-	public void addCommnet(Comment comment) {
-		comment.setPost(this);
-		this.getComments().add(comment);
-	}
 }
