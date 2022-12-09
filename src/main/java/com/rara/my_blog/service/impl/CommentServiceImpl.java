@@ -39,7 +39,6 @@ public class CommentServiceImpl implements CommentService {
 			Comment comment = new Comment(commentRequestDto, user.getUsername());
 			comment.setUser(user);
 			comment.setPost(post);
-			post.addCommnet(comment);
 			commentRepository.save(comment);
 			return new CommentResponseDto(comment);
 		} else {

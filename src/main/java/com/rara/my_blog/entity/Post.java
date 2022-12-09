@@ -52,7 +52,10 @@ public class Post extends Timestamped {
 			this.user.getComments().remove(this);
 		}
 		this.user = user;
-		user.getPosts().add(this);
+
+		if (user.getPosts().contains(this)) {
+			user.getPosts().add(this);
+		}
 	}
 
 	public void update(PostRequestDto requestDto, String username) {

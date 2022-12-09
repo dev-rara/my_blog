@@ -45,7 +45,10 @@ public class Comment extends Timestamped {
 			this.post.getComments().remove(this);
 		}
 		this.post = post;
-		post.getComments().add(this);
+
+		if (!post.getComments().contains(this)) {
+			post.getComments().add(this);
+		}
 	}
 
 	public void setUser(User user) {
@@ -53,7 +56,10 @@ public class Comment extends Timestamped {
 			this.user.getComments().remove(this);
 		}
 		this.user = user;
-		user.getComments().add(this);
+
+		if (!user.getComments().contains(this)) {
+			user.getComments().add(this);
+		}
 	}
 
 	public void update(CommentRequestDto commentRequestDto, String username) {
@@ -61,7 +67,4 @@ public class Comment extends Timestamped {
 		this.username = username;
 	}
 
-	public void updatePost(Post post) {
-		this.post = post;
-	}
 }
