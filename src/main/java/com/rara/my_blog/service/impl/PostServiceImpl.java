@@ -36,7 +36,7 @@ public class PostServiceImpl implements PostService {
 		User user = getUserInfo(httpServletRequest);
 
 		//유효한 토큰일 경우 게시글 등록
-		Post post = new Post(requestDto, user.getUsername());
+		Post post = new Post(requestDto.getTitle(), user.getUsername(), requestDto.getContent());
 		post.setUser(user);
 		post = postRepository.save(post);
 		return new PostResponseDto(post);
@@ -68,7 +68,7 @@ public class PostServiceImpl implements PostService {
 		//유효한 토큰이거나 AMIN 권한일 경우 수정
 		if (postRepository.existsByIdAndUsername(id, user.getUsername()) || user.getRole().equals(UserRoleEnum.ADMIN)) {
 			Post post = postRepository.findById(id).get();
-			post.update(requestDto, user.getUsername());
+			post.update(requestDto.getTitle(), user.getUsername(), requestDto.getContent());
 			return new PostResponseDto(post);
 		} else {
 			throw new CustomException(ErrorCode.UNAVAILABLE_MODIFICATION);

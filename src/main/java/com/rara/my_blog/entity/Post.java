@@ -41,10 +41,10 @@ public class Post extends Timestamped {
 	@OneToMany(mappedBy = "post", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<Comment> comments = new ArrayList<>();
 
-	public Post(PostRequestDto requestDto, String username) {
-		this.title = requestDto.getTitle();
+	public Post(String title, String username, String content) {
+		this.title = title;
 		this.username = username;
-		this.content = requestDto.getContent();
+		this.content = content;
 	}
 
 	public void setUser(User user) {
@@ -58,10 +58,10 @@ public class Post extends Timestamped {
 		}
 	}
 
-	public void update(PostRequestDto requestDto, String username) {
-		this.title = requestDto.getTitle();
+	public void update(String title, String username, String content) {
+		this.title = title;
 		this.username = username;
-		this.content = requestDto.getContent();
+		this.content = content;
 	}
 
 }

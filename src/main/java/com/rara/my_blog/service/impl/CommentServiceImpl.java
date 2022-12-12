@@ -36,7 +36,7 @@ public class CommentServiceImpl implements CommentService {
 
 		if(postRepository.existsById(id)) {
 			Post post = postRepository.findById(id).get();
-			Comment comment = new Comment(commentRequestDto, user.getUsername());
+			Comment comment = new Comment(commentRequestDto.getContent(), user.getUsername());
 			comment.setUser(user);
 			comment.setPost(post);
 			commentRepository.save(comment);
@@ -54,7 +54,7 @@ public class CommentServiceImpl implements CommentService {
 		//유효한 토큰이거나 AMIN 권한일 경우 수정
 		if (commentRepository.existsByIdAndUsername(id, user.getUsername()) || user.getRole().equals(UserRoleEnum.ADMIN)) {
 			Comment comment = commentRepository.findById(id).get();
-			comment.update(commentRequestDto, user.getUsername());
+			comment.update(commentRequestDto.getContent(), user.getUsername());
 			return new CommentResponseDto(comment);
 		} else {
 			throw new CustomException(ErrorCode.UNAVAILABLE_MODIFICATION);
