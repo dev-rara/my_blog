@@ -1,11 +1,13 @@
 package com.rara.my_blog.jwt;
 
 import com.rara.my_blog.dto.UserRoleEnum;
-import com.rara.my_blog.exception.CustomException;
-import com.rara.my_blog.exception.ErrorCode;
+import com.rara.my_blog.security.UserDetailsServiceImpl;
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.UnsupportedJwtException;
 import io.jsonwebtoken.security.Keys;
 import java.security.Key;
 import java.util.Base64;
@@ -15,6 +17,9 @@ import javax.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
@@ -34,6 +39,8 @@ public class JwtUtil {
 	@Value("${jwt.secret.key}")
 	private String secretKey;
 	private Key key;
+
+	private final UserDetailsServiceImpl userDetailsService;
 	private final SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.HS256;
 
 	@PostConstruct
@@ -70,14 +77,23 @@ public class JwtUtil {
 		try {
 			Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
 			return true;
-		} catch (Exception e) {
-			throw new CustomException(ErrorCode.INVALID_TOKEN);
+		} catch (SecurityException | MalformedJwtException | UnsupportedJwtException e) {
+			log.info("Invalid JWT Token, 토큰이 유효하지 않습니다.");
+			throw new IllegalArgumentException("토큰이 유효하지 않습니다.");
+		} catch (ExpiredJwtException e) {
+			log.info("Expired JWT Token, 만료된 JWT token 입니다.");
+			throw new IllegalArgumentException("만료된 토큰입니다.");
 		}
 	}
 
 	//사용자 정보 가져오기
 	public Claims getUserInfoFromToken(String token) {
 		return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody();
+	}
+
+	public Authentication createAuthentication(String username) {
+		UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+		return new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
 	}
 
 }

@@ -14,6 +14,7 @@ import java.util.Optional;
 import javax.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,7 +23,10 @@ import org.springframework.transaction.annotation.Transactional;
 public class UserServiceImpl implements UserService {
 
 	private final UserRepository userRepository;
+
 	private final JwtUtil jwtUtil;
+
+	private final PasswordEncoder passwordEncoder;
 
 	private static final String ADMIN_TOKEN = "AAABnvxRVklrnYxKZ0aHgTBcXukeZygoC";
 
@@ -30,7 +34,7 @@ public class UserServiceImpl implements UserService {
 	@Transactional
 	public ResponseDto signup(SignupRequestDto signupRequestDto) {
 		String username = signupRequestDto.getUsername();
-		String password = signupRequestDto.getPassword();
+		String password = passwordEncoder.encode(signupRequestDto.getPassword());
 
 		//회원 중복 확인
 		Optional<User> found = userRepository.findByUsername(username);
@@ -65,7 +69,7 @@ public class UserServiceImpl implements UserService {
 		);
 
 		//비밀번호 확인
-		if(!user.getPassword().equals(password)) {
+		if(!passwordEncoder.matches(password, user.getPassword())) {
 			throw new CustomException(ErrorCode.MISMATCH_PASSWORD);
 		}
 
