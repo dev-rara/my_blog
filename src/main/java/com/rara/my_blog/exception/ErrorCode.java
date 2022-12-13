@@ -18,6 +18,8 @@ public enum ErrorCode {
 	UNAVAILABLE_MODIFICATION(BAD_REQUEST.value(), "작성자만 삭제/수정할 수 있습니다."),
 	MISMATCH_ADMIN_TOKEN(BAD_REQUEST.value(), "관리자 암호가 틀립니다."),
 	INVALID_TOKEN(BAD_REQUEST.value(), "토큰이 유효하지 않습니다."),
+	EXPIRED_TOKEN(BAD_REQUEST.value(), "만료된 토큰입니다."),
+	UNSUPPORTED_TOKEN(BAD_REQUEST.value(), "지원되지 않는 토큰입니다."),
 
 	/* 500 INTERNAL_SERVER_ERROR : 내부 서버 오류 */
 	SERVER_ERROR(INTERNAL_SERVER_ERROR.value(), "내부 서버 오류가 발생했습니다.");
