@@ -18,6 +18,14 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -29,10 +37,12 @@ public class UserServiceImpl implements UserService {
 
 	private final UserRepository userRepository;
 	private final PasswordEncoder passwordEncoder;
+	private final AuthenticationManagerBuilder authenticationManagerBuilder;
 	private final JwtUtil jwtUtil;
 	private final UserUtil userUtil;
-	private static final String ADMIN_TOKEN = "AAABnvxRVklrnYxKZ0aHgTBcXukeZygoC";
 
+	@Value("${jwt.admin.token}")
+	private String adminToken;
 
 	@Override
 	@Transactional
@@ -41,15 +51,14 @@ public class UserServiceImpl implements UserService {
 		String password = passwordEncoder.encode(signupRequestDto.getPassword());
 
 		//회원 중복 확인
-		Optional<User> found = userRepository.findByUsername(username);
-		if(found.isPresent()) {
+		if (userRepository.existsByUsername(username)) {
 			throw new CustomException(ErrorCode.OVERLAP_USERNAME);
 		}
 
 		//사용자 ROLE 확인
 		UserRoleEnum role = UserRoleEnum.USER;
 		if (signupRequestDto.isAdmin()) {
-			if (!signupRequestDto.getAdminToken().equals(ADMIN_TOKEN)) {
+			if (!signupRequestDto.getAdminToken().equals(adminToken)) {
 				throw new CustomException(ErrorCode.MISMATCH_ADMIN_TOKEN);
 			}
 			role = UserRoleEnum.ADMIN;
@@ -64,21 +73,26 @@ public class UserServiceImpl implements UserService {
 	@Override
 	@Transactional(readOnly = true)
 	public ResponseDto login(LoginRequestDto loginRequestDto, HttpServletResponse httpServletResponse) {
-		String username = loginRequestDto.getUsername();
-		String password = loginRequestDto.getPassword();
-
 		//사용자 확인
-		User user = userRepository.findByUsername(username).orElseThrow(
+		User user = userRepository.findByUsername(loginRequestDto.getUsername()).orElseThrow(
 			() -> new CustomException(ErrorCode.USER_NOT_FOUND)
 		);
 
 		//비밀번호 확인
-		if(!passwordEncoder.matches(password, user.getPassword())) {
+		if(!passwordEncoder.matches(loginRequestDto.getPassword(), user.getPassword())) {
 			throw new CustomException(ErrorCode.MISMATCH_PASSWORD);
 		}
 
+		//1. Login ID/PW 를 기반으로 AuthenticationToken 생성
+		UsernamePasswordAuthenticationToken authenticationToken =
+			new UsernamePasswordAuthenticationToken(loginRequestDto.getUsername(), loginRequestDto.getPassword());
+
+		//2. 실제로 검증(사용자 비밀번호 체크)이 이루어지는 부분
+		Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
+
+		//3. 토큰을 생성하여 Header 에 저장
 		httpServletResponse.addHeader(
-			JwtUtil.AUTHORIZATION_HEADER, jwtUtil.createToken(user.getUsername(), user.getRole()));
+			JwtUtil.AUTHORIZATION_HEADER, jwtUtil.createToken(authentication));
 
 		return new ResponseDto("로그인 성공", HttpStatus.OK.value());
 	}
