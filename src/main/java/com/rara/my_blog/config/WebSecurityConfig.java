@@ -33,7 +33,8 @@ public class WebSecurityConfig {
 
 		http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 
-		http.authorizeRequests().antMatchers("/", "/api/auth/**").permitAll()
+		http.authorizeRequests().antMatchers("/").permitAll()
+			.antMatchers(HttpMethod.POST, "/api/user/**").permitAll()
 			.antMatchers(HttpMethod.GET, "/api/posts/**").permitAll()
 			.anyRequest().authenticated()
 			.and().addFilterBefore(new JwtAuthFilter(jwtUtil),
