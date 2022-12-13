@@ -1,5 +1,5 @@
 # my_blog
-게시글을 작성하여 나만의 블로그를 만들 수 있는 Rest API  
+게시글을 작성하여 나만의 블로그를 만들 수 있는  API  
 [블로그 프로젝트 정보](https://dev-rara.notion.site/Blog-Project-6c0667ca7016470b8599a5599d8a92b4)
 <br>
 
