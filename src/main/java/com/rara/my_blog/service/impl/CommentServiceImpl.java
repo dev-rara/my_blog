@@ -51,9 +51,12 @@ public class CommentServiceImpl implements CommentService {
 		HttpServletRequest httpServletRequest) {
 		User user = getUserInfo(httpServletRequest);
 
+		Comment comment = commentRepository.findById(id).orElseThrow(
+			() -> new CustomException(ErrorCode.NOT_FOUND_COMMENT)
+		);
+
 		//유효한 토큰이거나 AMIN 권한일 경우 수정
-		if (commentRepository.existsByIdAndUsername(id, user.getUsername()) || user.getRole().equals(UserRoleEnum.ADMIN)) {
-			Comment comment = commentRepository.findById(id).get();
+		if (comment.getUsername() == user.getUsername() || user.getRole().equals(UserRoleEnum.ADMIN)) {
 			comment.update(commentRequestDto.getContent(), user.getUsername());
 			return new CommentResponseDto(comment);
 		} else {
@@ -65,8 +68,12 @@ public class CommentServiceImpl implements CommentService {
 	public ResponseDto deleteComment(Long id, HttpServletRequest httpServletRequest) {
 		User user = getUserInfo(httpServletRequest);
 
+		Comment comment = commentRepository.findById(id).orElseThrow(
+			() -> new CustomException(ErrorCode.NOT_FOUND_COMMENT)
+		);
+
 		//유효한 토큰이거나 AMIN 권한일 경우 삭제
-		if (commentRepository.existsByIdAndUsername(id, user.getUsername()) || user.getRole().equals(UserRoleEnum.ADMIN)) {
+		if (comment.getUsername() == user.getUsername() || user.getRole().equals(UserRoleEnum.ADMIN)) {
 			commentRepository.deleteById(id);
 			return new ResponseDto("댓글 삭제 성공", HttpStatus.OK.value());
 		} else {

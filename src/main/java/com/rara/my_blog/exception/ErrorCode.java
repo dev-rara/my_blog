@@ -14,6 +14,7 @@ public enum ErrorCode {
 	OVERLAP_USERNAME(BAD_REQUEST.value(), "중복된 username 입니다."),
 	MISMATCH_PASSWORD(BAD_REQUEST.value(), "비밀번호가 일치하지 않습니다."),
 	NOT_FOUND_POST(BAD_REQUEST.value(), "게시글을 찾을 수 없습니다"),
+	NOT_FOUND_COMMENT(BAD_REQUEST.value(), "댓글을 찾을 수 없습니다"),
 	UNAVAILABLE_MODIFICATION(BAD_REQUEST.value(), "작성자만 삭제/수정할 수 있습니다."),
 	MISMATCH_ADMIN_TOKEN(BAD_REQUEST.value(), "관리자 암호가 틀립니다."),
 	INVALID_TOKEN(BAD_REQUEST.value(), "토큰이 유효하지 않습니다."),
