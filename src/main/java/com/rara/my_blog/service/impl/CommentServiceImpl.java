@@ -56,7 +56,7 @@ public class CommentServiceImpl implements CommentService {
 		);
 
 		//유효한 토큰이거나 AMIN 권한일 경우 수정
-		if (comment.getUsername() == user.getUsername() || user.getRole().equals(UserRoleEnum.ADMIN)) {
+		if (comment.getUsername().equals(user.getUsername()) || user.getRole().equals(UserRoleEnum.ADMIN)) {
 			comment.update(commentRequestDto.getContent(), user.getUsername());
 			return new CommentResponseDto(comment);
 		} else {
@@ -73,7 +73,7 @@ public class CommentServiceImpl implements CommentService {
 		);
 
 		//유효한 토큰이거나 AMIN 권한일 경우 삭제
-		if (comment.getUsername() == user.getUsername() || user.getRole().equals(UserRoleEnum.ADMIN)) {
+		if (comment.getUsername().equals(user.getUsername()) || user.getRole().equals(UserRoleEnum.ADMIN)) {
 			commentRepository.deleteById(id);
 			return new ResponseDto("댓글 삭제 성공", HttpStatus.OK.value());
 		} else {
