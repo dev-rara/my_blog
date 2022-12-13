@@ -27,9 +27,8 @@ public class UserController {
 	public ResponseDto signup(@Valid @RequestBody SignupRequestDto signupRequestDto, BindingResult bindingResult) {
 		if(bindingResult.hasErrors()) {
 			StringBuilder sb = new StringBuilder();
-			bindingResult.getAllErrors().forEach(objectError -> {
-				sb.append(objectError.getDefaultMessage());
-			});
+			bindingResult.getAllErrors().forEach(objectError -> sb.append(objectError.getDefaultMessage()));
+
 			return new ResponseDto(sb.toString(), HttpStatus.BAD_REQUEST.value());
 		}
 		return userService.signup(signupRequestDto);
