@@ -11,6 +11,7 @@ import com.rara.my_blog.exception.ErrorCode;
 import com.rara.my_blog.jwt.JwtUtil;
 import com.rara.my_blog.repository.UserRepository;
 import com.rara.my_blog.service.UserService;
+import com.rara.my_blog.util.UserUtil;
 import io.jsonwebtoken.Claims;
 import java.util.Optional;
 import javax.servlet.http.HttpServletRequest;
@@ -27,12 +28,11 @@ import org.springframework.transaction.annotation.Transactional;
 public class UserServiceImpl implements UserService {
 
 	private final UserRepository userRepository;
-
-	private final JwtUtil jwtUtil;
-
 	private final PasswordEncoder passwordEncoder;
-
+	private final JwtUtil jwtUtil;
+	private final UserUtil userUtil;
 	private static final String ADMIN_TOKEN = "AAABnvxRVklrnYxKZ0aHgTBcXukeZygoC";
+
 
 	@Override
 	@Transactional
@@ -86,7 +86,7 @@ public class UserServiceImpl implements UserService {
 	@Override
 	@Transactional
 	public ResponseDto delete(DeleteRequestDto deleteRequestDto, HttpServletRequest httpServletRequest) {
-		User user = getUserInfo(httpServletRequest);
+		User user = userUtil.getUserInfo(httpServletRequest);
 
 		if (passwordEncoder.matches(deleteRequestDto.getPassword(), user.getPassword())) {
 			userRepository.deleteByUsername(user.getUsername());
@@ -97,26 +97,4 @@ public class UserServiceImpl implements UserService {
 		}
 	}
 
-	private User getUserInfo(HttpServletRequest httpServletRequest) {
-		String token = jwtUtil.resolveToken(httpServletRequest);
-		Claims claims;
-
-		//유효한 토큰일 경우 수정 가능
-		if (token != null) {
-			if (jwtUtil.validateToken(token)) {
-				// 토큰에서 사용자 정보 가져오기
-				claims = jwtUtil.getUserInfoFromToken(token);
-			} else {
-				throw new CustomException(ErrorCode.INVALID_TOKEN);
-			}
-
-			// 토큰에서 가져온 사용자 정보를 사용하여 DB 조회
-			User user = userRepository.findByUsername(claims.getSubject()).orElseThrow(
-				() -> new CustomException(ErrorCode.USER_NOT_FOUND)
-			);
-			return user;
-		} else {
-			throw new CustomException(ErrorCode.INVALID_TOKEN);
-		}
-	}
 }

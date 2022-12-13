@@ -14,6 +14,7 @@ import com.rara.my_blog.repository.CommentRepository;
 import com.rara.my_blog.repository.PostRepository;
 import com.rara.my_blog.repository.UserRepository;
 import com.rara.my_blog.service.CommentService;
+import com.rara.my_blog.util.UserUtil;
 import io.jsonwebtoken.Claims;
 import javax.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -26,13 +27,15 @@ public class CommentServiceImpl implements CommentService {
 
 	private final CommentRepository commentRepository;
 	private final PostRepository postRepository;
-	private final JwtUtil jwtUtil;
 	private final UserRepository userRepository;
+	private final JwtUtil jwtUtil;
+	private final UserUtil userUtil;
+
 
 	@Override
 	public CommentResponseDto createComment(Long id, CommentRequestDto commentRequestDto,
 		HttpServletRequest httpServletRequest) {
-		User user = getUserInfo(httpServletRequest);
+		User user = userUtil.getUserInfo(httpServletRequest);
 
 		if(postRepository.existsById(id)) {
 			Post post = postRepository.findById(id).get();
@@ -49,7 +52,7 @@ public class CommentServiceImpl implements CommentService {
 	@Override
 	public CommentResponseDto updateComment(Long id, CommentRequestDto commentRequestDto,
 		HttpServletRequest httpServletRequest) {
-		User user = getUserInfo(httpServletRequest);
+		User user = userUtil.getUserInfo(httpServletRequest);
 
 		Comment comment = commentRepository.findById(id).orElseThrow(
 			() -> new CustomException(ErrorCode.NOT_FOUND_COMMENT)
@@ -66,7 +69,7 @@ public class CommentServiceImpl implements CommentService {
 
 	@Override
 	public ResponseDto deleteComment(Long id, HttpServletRequest httpServletRequest) {
-		User user = getUserInfo(httpServletRequest);
+		User user = userUtil.getUserInfo(httpServletRequest);
 
 		Comment comment = commentRepository.findById(id).orElseThrow(
 			() -> new CustomException(ErrorCode.NOT_FOUND_COMMENT)
@@ -81,25 +84,4 @@ public class CommentServiceImpl implements CommentService {
 		}
 	}
 
-	private User getUserInfo(HttpServletRequest httpServletRequest) {
-		String token = jwtUtil.resolveToken(httpServletRequest);
-		Claims claims;
-
-		//유효한 토큰일 경우 수정 가능
-		if (token != null) {
-			if (jwtUtil.validateToken(token)) {
-				// 토큰에서 사용자 정보 가져오기
-				claims = jwtUtil.getUserInfoFromToken(token);
-			} else {
-				throw new CustomException(ErrorCode.INVALID_TOKEN);
-			}
-
-			// 토큰에서 가져온 사용자 정보를 사용하여 DB 조회
-			return userRepository.findByUsername(claims.getSubject()).orElseThrow(
-				() -> new CustomException(ErrorCode.USER_NOT_FOUND)
-			);
-		} else {
-			throw new CustomException(ErrorCode.INVALID_TOKEN);
-		}
-	}
 }

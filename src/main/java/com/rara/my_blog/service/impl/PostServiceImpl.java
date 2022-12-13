@@ -12,6 +12,7 @@ import com.rara.my_blog.jwt.JwtUtil;
 import com.rara.my_blog.repository.PostRepository;
 import com.rara.my_blog.repository.UserRepository;
 import com.rara.my_blog.service.PostService;
+import com.rara.my_blog.util.UserUtil;
 import io.jsonwebtoken.Claims;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -27,13 +28,15 @@ import org.springframework.transaction.annotation.Transactional;
 public class PostServiceImpl implements PostService {
 
 	private final PostRepository postRepository;
-	private final JwtUtil jwtUtil;
 	private final UserRepository userRepository;
+	private final JwtUtil jwtUtil;
+	private final UserUtil userUtil;
+
 
 	@Override
 	@Transactional
 	public PostResponseDto createPost(PostRequestDto requestDto, HttpServletRequest httpServletRequest) {
-		User user = getUserInfo(httpServletRequest);
+		User user = userUtil.getUserInfo(httpServletRequest);
 
 		//유효한 토큰일 경우 게시글 등록
 		Post post = new Post(requestDto.getTitle(), user.getUsername(), requestDto.getContent());
@@ -63,7 +66,7 @@ public class PostServiceImpl implements PostService {
 	@Override
 	@Transactional
 	public PostResponseDto updatePost(Long id, PostRequestDto requestDto, HttpServletRequest httpServletRequest) {
-		User user = getUserInfo(httpServletRequest);
+		User user = userUtil.getUserInfo(httpServletRequest);
 
 		//유효한 토큰이거나 AMIN 권한일 경우 수정
 		if (postRepository.existsByIdAndUsername(id, user.getUsername()) || user.getRole().equals(UserRoleEnum.ADMIN)) {
@@ -78,7 +81,7 @@ public class PostServiceImpl implements PostService {
 
 	@Override
 	public ResponseDto deletePost(Long id, HttpServletRequest httpServletRequest) {
-		User user = getUserInfo(httpServletRequest);
+		User user = userUtil.getUserInfo(httpServletRequest);
 
 		//유효한 토큰이거나 AMIN 권한일 경우 삭제
 		if (postRepository.existsByIdAndUsername(id, user.getUsername()) || user.getRole().equals(UserRoleEnum.ADMIN)) {
@@ -89,27 +92,4 @@ public class PostServiceImpl implements PostService {
 		}
 	}
 
-
-	private User getUserInfo(HttpServletRequest httpServletRequest) {
-		String token = jwtUtil.resolveToken(httpServletRequest);
-		Claims claims;
-
-		//유효한 토큰일 경우 수정 가능
-		if (token != null) {
-			if (jwtUtil.validateToken(token)) {
-				// 토큰에서 사용자 정보 가져오기
-				claims = jwtUtil.getUserInfoFromToken(token);
-			} else {
-				throw new CustomException(ErrorCode.INVALID_TOKEN);
-			}
-
-			// 토큰에서 가져온 사용자 정보를 사용하여 DB 조회
-			User user = userRepository.findByUsername(claims.getSubject()).orElseThrow(
-				() -> new CustomException(ErrorCode.USER_NOT_FOUND)
-			);
-			return user;
-		} else {
-			throw new CustomException(ErrorCode.INVALID_TOKEN);
-		}
-	}
 }
