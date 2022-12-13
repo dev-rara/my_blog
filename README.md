@@ -6,11 +6,13 @@
 ## 🛠️Tech Stack
 * Spring Boot
 * Spring Data JPA
+* Spring Security
 * Spring Validation
 * JWT
 * AWS RDS(MySQL)
 * AWS EC2
-* Lombok  <br>
+* Lombok  
+<br>
 
 ## 💡구현 기능
 **1. 회원가입 API** 
