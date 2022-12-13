@@ -19,7 +19,7 @@ public class PostResponseDto {
 	private LocalDateTime createdAt;
 	private LocalDateTime modifiedAt;
 
-	private List<CommentResponseDto> comments = new ArrayList<>();
+	private List<CommentResponseDto> comments;
 
 	public PostResponseDto (Post post) {
 		this.id = post.getId();
