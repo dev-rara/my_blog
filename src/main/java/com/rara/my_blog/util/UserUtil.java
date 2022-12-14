@@ -20,19 +20,14 @@ public class UserUtil {
 		String token = jwtUtil.resolveToken(httpServletRequest);
 		Claims claims;
 
-		//유효한 토큰일 경우 수정 가능
-		if (token != null) {
-			if (jwtUtil.validateToken(token)) {
-				// 토큰에서 사용자 정보 가져오기
-				claims = jwtUtil.getUserInfoFromToken(token);
-			} else {
-				throw new CustomException(ErrorCode.INVALID_TOKEN);
-			}
+		//토큰이 null 이 아니고 유효할 경우 수정 가능
+		if (token != null && jwtUtil.validateToken(token)) {
+			// 토큰에서 사용자 정보 가져오기
+			claims = jwtUtil.getUserInfoFromToken(token);
 
 			// 토큰에서 가져온 사용자 정보를 사용하여 DB 조회
 			return userRepository.findByUsername(claims.getSubject()).orElseThrow(
-				() -> new CustomException(ErrorCode.USER_NOT_FOUND)
-			);
+				() -> new CustomException(ErrorCode.USER_NOT_FOUND));
 		} else {
 			throw new CustomException(ErrorCode.INVALID_TOKEN);
 		}
