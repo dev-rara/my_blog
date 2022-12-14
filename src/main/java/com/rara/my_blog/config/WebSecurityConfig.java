@@ -2,6 +2,8 @@ package com.rara.my_blog.config;
 
 import com.rara.my_blog.jwt.JwtAuthFilter;
 import com.rara.my_blog.jwt.JwtUtil;
+import com.rara.my_blog.security.CustomAccessDeniedHandler;
+import com.rara.my_blog.security.CustomAuthenticationEntryPoint;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -20,6 +22,8 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class WebSecurityConfig {
 
 	private final JwtUtil jwtUtil;
+	private final CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
+	private final CustomAccessDeniedHandler customAccessDeniedHandler;
 
 	@Bean
 	public PasswordEncoder passwordEncoder() {
@@ -34,11 +38,17 @@ public class WebSecurityConfig {
 		http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 
 		http.authorizeRequests().antMatchers("/").permitAll()
-			.antMatchers(HttpMethod.POST, "/api/user/**").permitAll()
+			.antMatchers(HttpMethod.POST, "/api/users/**").permitAll()
 			.antMatchers(HttpMethod.GET, "/api/posts/**").permitAll()
 			.anyRequest().authenticated()
 			.and().addFilterBefore(new JwtAuthFilter(jwtUtil),
 				UsernamePasswordAuthenticationFilter.class);
+
+		// 401 Error 처리, 인증과정에서 실패할 시 처리
+		http.exceptionHandling().authenticationEntryPoint(customAuthenticationEntryPoint);
+
+		// 403 Error 처리, 인증과는 별개로 추가적인 권한이 충족되지 않는 경우
+		http.exceptionHandling().accessDeniedHandler(customAccessDeniedHandler);
 
 		return http.build();
 	}

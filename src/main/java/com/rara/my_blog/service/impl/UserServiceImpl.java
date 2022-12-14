@@ -44,6 +44,7 @@ public class UserServiceImpl implements UserService {
 	@Value("${jwt.admin.token}")
 	private String adminToken;
 
+
 	@Override
 	@Transactional
 	public ResponseDto signup(SignupRequestDto signupRequestDto) {
