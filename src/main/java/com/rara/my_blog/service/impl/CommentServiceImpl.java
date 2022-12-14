@@ -16,10 +16,13 @@ import com.rara.my_blog.repository.UserRepository;
 import com.rara.my_blog.service.CommentService;
 import com.rara.my_blog.util.UserUtil;
 import io.jsonwebtoken.Claims;
+import java.util.List;
+import java.util.stream.Collectors;
 import javax.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -33,6 +36,7 @@ public class CommentServiceImpl implements CommentService {
 
 
 	@Override
+	@Transactional
 	public CommentResponseDto createComment(Long id, CommentRequestDto commentRequestDto,
 		HttpServletRequest httpServletRequest) {
 		User user = userUtil.getUserInfo(httpServletRequest);
@@ -50,6 +54,7 @@ public class CommentServiceImpl implements CommentService {
 	}
 
 	@Override
+	@Transactional
 	public CommentResponseDto updateComment(Long id, CommentRequestDto commentRequestDto,
 		HttpServletRequest httpServletRequest) {
 		User user = userUtil.getUserInfo(httpServletRequest);
@@ -68,6 +73,7 @@ public class CommentServiceImpl implements CommentService {
 	}
 
 	@Override
+	@Transactional
 	public ResponseDto deleteComment(Long id, HttpServletRequest httpServletRequest) {
 		User user = userUtil.getUserInfo(httpServletRequest);
 

@@ -1,5 +1,6 @@
 package com.rara.my_blog.service.impl;
 
+import com.rara.my_blog.dto.CommentResponseDto;
 import com.rara.my_blog.dto.PostRequestDto;
 import com.rara.my_blog.dto.PostResponseDto;
 import com.rara.my_blog.dto.ResponseDto;
@@ -9,11 +10,12 @@ import com.rara.my_blog.entity.User;
 import com.rara.my_blog.exception.CustomException;
 import com.rara.my_blog.exception.ErrorCode;
 import com.rara.my_blog.jwt.JwtUtil;
+import com.rara.my_blog.repository.CommentRepository;
 import com.rara.my_blog.repository.PostRepository;
 import com.rara.my_blog.repository.UserRepository;
 import com.rara.my_blog.service.PostService;
 import com.rara.my_blog.util.UserUtil;
-import io.jsonwebtoken.Claims;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import javax.servlet.http.HttpServletRequest;
@@ -29,6 +31,7 @@ public class PostServiceImpl implements PostService {
 
 	private final PostRepository postRepository;
 	private final UserRepository userRepository;
+	private final CommentRepository commentRepository;
 	private final JwtUtil jwtUtil;
 	private final UserUtil userUtil;
 
@@ -49,8 +52,15 @@ public class PostServiceImpl implements PostService {
 	@Override
 	@Transactional(readOnly = true)
 	public List<PostResponseDto> getPostList() {
-		return postRepository.findAllByOrderByCreatedAtDesc().stream().map(PostResponseDto::new).collect(
-			Collectors.toList());
+		List<Post> postList = postRepository.findAllByOrderByModifiedAtDesc();
+
+		List<PostResponseDto> posts = new ArrayList<>();
+		for (Post post : postList) {
+			List<CommentResponseDto> comments = getComments(post.getId());
+
+			posts.add(new PostResponseDto(post, comments));
+		}
+		return posts;
 	}
 
 	@Override
@@ -59,7 +69,8 @@ public class PostServiceImpl implements PostService {
 		Post post = postRepository.findById(id).orElseThrow(
 			() -> new CustomException(ErrorCode.NOT_FOUND_POST)
 		);
-		return new PostResponseDto(post);
+		List<CommentResponseDto> comments = getComments(post.getId());
+		return new PostResponseDto(post, comments);
 	}
 
 
@@ -90,6 +101,13 @@ public class PostServiceImpl implements PostService {
 		} else {
 			throw new CustomException(ErrorCode.UNAVAILABLE_MODIFICATION);
 		}
+	}
+
+
+	@Transactional(readOnly = true)
+	private List<CommentResponseDto> getComments(Long id) {
+		return commentRepository.findByPostIdOrderByCreatedAtDesc(id).stream().map(CommentResponseDto::new).collect(
+			Collectors.toList());
 	}
 
 }
