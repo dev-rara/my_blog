@@ -16,7 +16,7 @@ import org.springframework.stereotype.Component;
 public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint {
 
 	private static final SecurityExceptionDto exceptionDto =
-		new SecurityExceptionDto(HttpStatus.UNAUTHORIZED.getReasonPhrase(), HttpStatus.UNAUTHORIZED.value());
+		new SecurityExceptionDto("인증에 실패하였습니다.", HttpStatus.UNAUTHORIZED.value());
 
 	@Override
 	public void commence(HttpServletRequest request,
