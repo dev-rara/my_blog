@@ -7,7 +7,6 @@
 * Spring Boot
 * Spring Data JPA
 * Spring Security
-* Spring Validation
 * JWT
 * AWS RDS(MySQL)
 * AWS EC2
