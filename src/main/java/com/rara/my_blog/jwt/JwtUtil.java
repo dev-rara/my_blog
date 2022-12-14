@@ -1,7 +1,5 @@
 package com.rara.my_blog.jwt;
 
-import com.rara.my_blog.exception.CustomException;
-import com.rara.my_blog.exception.ErrorCode;
 import com.rara.my_blog.security.UserDetailsServiceImpl;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
@@ -100,14 +98,12 @@ public class JwtUtil {
 			return true;
 		} catch (SecurityException | MalformedJwtException e) {
 			log.info("Invalid JWT Token, 토큰이 유효하지 않습니다.");
-			throw new CustomException(ErrorCode.INVALID_TOKEN);
 		} catch (ExpiredJwtException e) {
 			log.info("Expired JWT Token, 만료된 JWT token 입니다.");
-			throw new CustomException(ErrorCode.EXPIRED_TOKEN);
 		} catch (UnsupportedJwtException e) {
 			log.info("지원되지 않는 JWT 토큰입니다.");
-			throw new CustomException(ErrorCode.UNSUPPORTED_TOKEN);
 		}
+		return false;
 	}
 
 	//사용자 정보 가져오기
