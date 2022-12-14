@@ -6,6 +6,7 @@ import com.rara.my_blog.dto.ResponseDto;
 import com.rara.my_blog.service.PostService;
 import java.util.List;
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -23,7 +24,7 @@ public class PostController {
 	private final PostService postService;
 
 	@PostMapping("/posts")    // 게시글 작성 API
-	public PostResponseDto createPost(@RequestBody PostRequestDto requestDto, HttpServletRequest httpServletRequest) {
+	public PostResponseDto createPost(@Valid @RequestBody PostRequestDto requestDto, HttpServletRequest httpServletRequest) {
 		return postService.createPost(requestDto, httpServletRequest);
 	}
 
@@ -38,7 +39,7 @@ public class PostController {
 	}
 
 	@PutMapping("/posts/{id}")   // 선택한 게시글 수정 API
-	public PostResponseDto updatePost(@PathVariable Long id, @RequestBody PostRequestDto requestDto, HttpServletRequest httpServletRequest) {
+	public PostResponseDto updatePost(@PathVariable Long id, @Valid @RequestBody PostRequestDto requestDto, HttpServletRequest httpServletRequest) {
 		return postService.updatePost(id, requestDto, httpServletRequest);
 	}
 
