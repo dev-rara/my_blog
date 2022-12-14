@@ -35,12 +35,12 @@ public class UserController {
 	}
 
 	@PostMapping("/login")
-	public ResponseDto login(@RequestBody LoginRequestDto loginRequestDto, HttpServletResponse response) {
+	public ResponseDto login(@Valid  @RequestBody LoginRequestDto loginRequestDto, HttpServletResponse response) {
 		return userService.login(loginRequestDto, response);
 	}
 
 	@DeleteMapping("/withdraw")
-	public ResponseDto withdraw(@RequestBody DeleteRequestDto deleteRequestDto, HttpServletRequest httpServletRequest) {
+	public ResponseDto withdraw(@Valid  @RequestBody DeleteRequestDto deleteRequestDto, HttpServletRequest httpServletRequest) {
 		return userService.delete(deleteRequestDto, httpServletRequest);
 	}
 }

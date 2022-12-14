@@ -5,6 +5,7 @@ import com.rara.my_blog.dto.CommentResponseDto;
 import com.rara.my_blog.dto.ResponseDto;
 import com.rara.my_blog.service.CommentService;
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -22,13 +23,13 @@ public class CommentController {
 
 	@PostMapping("/{id}")
 	public CommentResponseDto createComment(@PathVariable Long id,
-		@RequestBody CommentRequestDto commentRequestDto,
+		@Valid @RequestBody CommentRequestDto commentRequestDto,
 		HttpServletRequest httpServletRequest) {
 		return commentService.createComment(id, commentRequestDto, httpServletRequest);
 	}
 
 	@PutMapping("/{id}")
-	public CommentResponseDto updateComment(@PathVariable Long id, @RequestBody CommentRequestDto commentRequestDto,
+	public CommentResponseDto updateComment(@PathVariable Long id, @Valid @RequestBody CommentRequestDto commentRequestDto,
 		HttpServletRequest httpServletRequest) {
 		return commentService.updateComment(id, commentRequestDto, httpServletRequest);
 	}
